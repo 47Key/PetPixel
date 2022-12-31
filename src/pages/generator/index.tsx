@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { Inter } from '@next/font/google';
 import { DashboardFooter, SideMenu, Library } from '../../containers';
 import { useState, useEffect } from 'react';
+import { delay } from '../../functions/functions';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,7 +18,9 @@ export default function Generator() {
         //     window.location.replace('/registration');
         // }
         if (!isLoggedIn) {
-            window.location.replace('/registration');
+            delay(1000).then(() => {
+                window.location.replace('/registration');
+            });
         }
     }, []);
 

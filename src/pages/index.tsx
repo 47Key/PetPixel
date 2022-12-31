@@ -1,13 +1,13 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { Inter } from '@next/font/google';
 import { signIn, signOut, useSession } from "next-auth/react";
-import { FAQ, Featured, Hero, Navbar, Pricing } from '../../containers';
-
+import { FAQ, Featured, Hero, Navbar, Pricing } from '../containers';
 import { trpc } from "../utils/trpc";
 
-// import { Inter } from '@next/font/google';
-// const inter = Inter({ subsets: ['latin'] })
+
+const inter = Inter({ subsets: ['latin'] })
 
 const Home: NextPage = () => {
   const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
