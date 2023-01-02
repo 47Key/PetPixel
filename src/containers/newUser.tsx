@@ -64,7 +64,7 @@ export const NewUser: React.FC = () => {
     // const handleSuccessSubmit = (formData: SuccessData) => {}
 
     return (
-        <section className="p-6 rounded-lg shadow bg-white sm:p-8 dark:bg-gray-800 lg:py-0 lg:pt-10">
+        <section className="p-6 rounded-lg shadow bg-white sm:p-8 dark:bg-gray-800 lg:pt-10">
             <div className="lg:flex">
                 <div className="flex items-center justify-center mx-auto md:w-[42rem] px-4 md:px-8 xl:px-0">
                     <div className="w-full">

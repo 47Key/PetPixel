@@ -1,28 +1,19 @@
 import Head from 'next/head';
 import { Inter } from '@next/font/google';
-import { DashboardFooter, SideMenu, Library } from '../../containers';
-import { useState, useEffect } from 'react';
-import { delay } from '../../functions/functions';
+import { SideMenu, Library, Login } from '../../containers';
+import { NextPage } from 'next';
+import { useSession } from 'next-auth/react';
+import { DelayRender, LoadingSpinner } from '../../components';
+import { signIn, getProviders } from 'next-auth/react';
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'] });
 
-export default function Generator() {
-    const [isLoggedIn, setIsLoggedIn] = useState<Boolean>(true);
+type Props = {
+    providers: any
+}
 
-    useEffect(() => {
-        // Implementation with token (Have not implemented tokens yet)
-        // const token = localStorage.getItem('token');
-        // if (token) {
-        //     setIsLoggedIn(true);
-        // } else {
-        //     window.location.replace('/registration');
-        // }
-        if (!isLoggedIn) {
-            delay(1000).then(() => {
-                window.location.replace('/registration');
-            });
-        }
-    }, []);
+const Generator: NextPage<Props> = ({ providers }) => {
+    const { data: session } = useSession();
 
     return (
         <>
@@ -33,25 +24,37 @@ export default function Generator() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main>
-                {/* <Navbar /> */}
-                <div className="w-screen h-screen flex flex-col justify-center items-center bg-gray-900">
-                    <SideMenu />
-                    <div className="relative flex flex-col flex-1 h-full overflow-y-auto overflow-x-hidden">
-                        <div className="h-full w-full flex flex-col items-center justify-center mx-9 pb-16">
-                            {isLoggedIn
-                                ?
-                                <>
-                                    <h1 className="text-gray-200 my-2 font-bold text-xl">Add your Photos Here</h1>
-                                    <Library />
-                                </>
-                                :
-                                null
-                            }
-                        </div>
-                    </div>
-                    <DashboardFooter />
+                <div className="w-screen h-screen">
+                    <DelayRender time={2000} loading={<LoadingSpinner />}>
+                        <div className="hidden"></div>
+                        {session
+                            ?
+                            <>
+                                <SideMenu />
+                                <div className="h-full overflow-y-auto overflow-x-hidden">
+                                    <div className="h-full w-full flex flex-col items-center justify-start mx-10 pb-16 bg-green-200/90">
+                                        <h1 className="text-white my-2 font-bold text-xl">Add your Photos Here</h1>
+                                        <Library />
+                                    </div>
+                                </div>
+                            </>
+                            :
+                            <Login providers={providers} />
+                        }
+                    </DelayRender>
                 </div>
             </main>
         </>
     );
+}
+
+export default Generator;
+
+export async function getServerSideProps(context: any) {
+    const providers = await getProviders();
+    return {
+        props: {
+            providers,
+        },
+    }
 }

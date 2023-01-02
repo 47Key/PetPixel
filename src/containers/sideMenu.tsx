@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import { signIn, signOut, useSession } from "next-auth/react";
 
 export const SideMenu: React.FC = () => {
     const [menuOpen, setMenuOpen] = useState<{ sideMenu: boolean }>({
         sideMenu: false,
     });
+    const { data: session } = useSession();
 
     function handleMenuOpen(key: string) {
         if (key === "side-menu") {
@@ -25,15 +27,21 @@ export const SideMenu: React.FC = () => {
                     ?
                     <div className="w-full px-5">
                         <div className="text-center text-gray-500 dark:text-gray-400">
-                            <img className="mx-auto mb-4 w-20 h-20 rounded-full" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/michael-gouch.png" alt="Micheal Avatar" />
-                            <h3 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                <a href="#">Key Dev</a>
-                            </h3>
-                            <p className="font-light text-gray-500 dark:text-gray-400">ryley@petpixel.ml</p>
-                            <a href="#" className="inline-flex items-center justify-center w-full py-2.5 px-5 my-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                            {session &&
+                                <img className="mx-auto mb-4 w-20 h-20 rounded-full" src={session.user?.image as string} alt="User Avatar" />
+                            }
+                            {session &&
+                                <h3 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                                    <a href="#">{session.user?.name}</a>
+                                </h3>
+                            }
+                            {session && 
+                                <p className="font-light text-gray-500 dark:text-gray-400">{session.user?.email}</p>
+                            }
+                            <button onClick={session ? () => signOut() : () => signIn()} className="inline-flex items-center justify-center w-full py-2.5 px-5 my-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                                 <svg aria-hidden="true" className="mr-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                                Logout
-                            </a>
+                                {session ? "Log Out" : "Log In"}
+                            </button>
                             <ul className="flex justify-center mb-4 space-x-1">
                                 <li>
                                     <a href="#" className="inline-flex text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">

@@ -1,10 +1,11 @@
 import Head from 'next/head';
 import { Inter } from '@next/font/google';
 import { NewUser } from '../../containers';
+import { NextPage } from 'next';
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'] });
 
-export default function Registration() {
+const RegistrationPage: NextPage = () => {
     return (
         <>
             <Head>
@@ -14,10 +15,12 @@ export default function Registration() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main>
-                <div className="w-full h-full min-h-screen bg-gray-900 flex items-center justify-center">
+                <div className="w-full h-screen min-h-screen bg-gray-900 flex items-center justify-center">
                     <NewUser />
                 </div>
             </main>
         </>
     );
 }
+
+export default RegistrationPage;

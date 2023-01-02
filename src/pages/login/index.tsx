@@ -1,10 +1,16 @@
 import Head from 'next/head';
 import { Inter } from '@next/font/google';
 import { Login, NewUser } from '../../containers';
+import { NextPage } from 'next';
+import { signIn, getProviders } from 'next-auth/react';
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'] });
 
-export default function Registration() {
+type Props = {
+    providers: any
+}
+
+const LoginPage: NextPage<Props> = ({ providers }) => {
     return (
         <>
             <Head>
@@ -14,10 +20,21 @@ export default function Registration() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main>
-                <div className="w-full h-full min-h-screen bg-gray-900 flex items-center justify-center">
-                    <Login />
+                <div className="w-full h-screen min-h-screen bg-gray-900 flex items-center justify-center">
+                    <Login providers={providers} />
                 </div>
             </main>
         </>
     );
+}
+
+export default LoginPage;
+
+export async function getServerSideProps(context: any) {
+    const providers = await getProviders();
+    return {
+        props: {
+            providers,
+        },
+    }
 }
