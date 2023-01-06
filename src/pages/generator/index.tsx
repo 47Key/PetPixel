@@ -5,6 +5,7 @@ import { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import { DelayRender, LoadingSpinner } from '../../components';
 import { signIn, getProviders } from 'next-auth/react';
+import { useEffect } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -15,6 +16,10 @@ type Props = {
 const Generator: NextPage<Props> = ({ providers }) => {
     const { data: session } = useSession();
 
+    useEffect(() => {
+        !session && window.location.replace('/login');
+    }, []);
+    
     return (
         <>
             <Head>

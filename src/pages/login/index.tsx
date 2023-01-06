@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { Inter } from '@next/font/google';
 import { Login, NewUser } from '../../containers';
 import { NextPage } from 'next';
-import { signIn, getProviders } from 'next-auth/react';
+import { useSession, getProviders } from 'next-auth/react';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -11,6 +11,9 @@ type Props = {
 }
 
 const LoginPage: NextPage<Props> = ({ providers }) => {
+    const { data: sessionData } = useSession();
+    console.log(sessionData);
+    sessionData && window.location.replace('/generator');
     return (
         <>
             <Head>
