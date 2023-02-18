@@ -1,25 +1,30 @@
 import Head from 'next/head';
 import { Inter } from '@next/font/google';
-import { SideMenu, Library, Login } from '../../containers';
+import { SideMenu, Library } from '../../containers';
 import { NextPage } from 'next';
-import { useSession } from 'next-auth/react';
-import { DelayRender, LoadingSpinner } from '../../components';
-import { signIn, getProviders } from 'next-auth/react';
-import { useEffect } from 'react';
+import { getSession, useSession } from 'next-auth/react';
+import { DelayRender, LoadingSpinner, Modal, FileUpload, Welcome } from '../../components';
+import { useState } from 'react';
+import { Create } from '../../containers/create';
 
 const inter = Inter({ subsets: ['latin'] });
 
-type Props = {
-    providers: any
-}
+const Generator: NextPage = () => {
+    const { data: sessionData } = useSession();
+    const [openWelcomeModal, setOpenWelcomeModal] = useState(true);
+    const [openUploadModal, setOpenUploadModal] = useState(false);
+    const [modal, setModal] = useState({
+        welcome: true,
+        upload: false,
+        create: false
+    });
+    const [createModal, setCreateModal] = useState(false);
+    console.log(sessionData);
 
-const Generator: NextPage<Props> = ({ providers }) => {
-    const { data: session } = useSession();
+    function openFileInput() {
+        setOpenUploadModal(true);
+    }
 
-    useEffect(() => {
-        !session && window.location.replace('/login');
-    }, []);
-    
     return (
         <>
             <Head>
@@ -29,23 +34,18 @@ const Generator: NextPage<Props> = ({ providers }) => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main>
-                <div className="w-screen h-screen">
+                <div className="flex flex-row w-screen h-screen items-center justify-center">
                     <DelayRender time={2000} loading={<LoadingSpinner />}>
-                        <div className="hidden"></div>
-                        {session
-                            ?
-                            <>
-                                <SideMenu />
-                                <div className="h-full overflow-y-auto overflow-x-hidden">
-                                    <div className="h-full w-full flex flex-col items-center justify-start mx-10 pb-16 bg-green-200/90">
-                                        <h1 className="text-white my-2 font-bold text-xl">Add your Photos Here</h1>
-                                        <Library />
-                                    </div>
-                                </div>
-                            </>
-                            :
-                            <Login providers={providers} />
-                        }
+                        {modal.welcome && <Modal type="welcome" id="welcome" component={<Welcome />} openState={[modal, setModal]} />}
+                        {modal.upload && <Modal type="upload" id="file-input" component={<FileUpload />} openState={[modal, setModal]} />}
+                        {modal.create && <Modal type="create" id="create" component={<Create />} openState={[modal, setModal]} />}
+                        <SideMenu openState={[modal, setModal]} />
+                        <div className="h-full overflow-x-hidden">
+                            <div className="h-full w-full flex flex-col items-center justify-start mx-10 pb-16">
+                                <h1 className="text-white my-2 pr-20 font-bold text-2xl">Photo Library</h1>
+                                <Library openState={[modal, setModal]} />
+                            </div>
+                        </div>
                     </DelayRender>
                 </div>
             </main>
@@ -56,10 +56,18 @@ const Generator: NextPage<Props> = ({ providers }) => {
 export default Generator;
 
 export async function getServerSideProps(context: any) {
-    const providers = await getProviders();
+    const session = await getSession(context);
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        };
+    }
+
     return {
-        props: {
-            providers,
-        },
+        props: {},
     }
 }

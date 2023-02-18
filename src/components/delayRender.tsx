@@ -4,7 +4,7 @@ import { delay } from '../functions/functions';
 type Props = {
     children: any,
     time: number,
-    loading: ReactElement
+    loading?: ReactElement | string
 }
 
 export const DelayRender: React.FC<Props> = ({ children, time, loading }) => {
